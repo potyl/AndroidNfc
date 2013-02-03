@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 public class NfcMainActivity extends Activity implements CreateNdefMessageCallback {
 
-	private static final String NFC_AAR = "sk.xeito.nfc.beam";
 	private static final String NFC_MIME_TYPE = "application/vnd.sk.xeito.nfc.beam";
 
 	private NfcAdapter nfcAdapter;
@@ -49,10 +48,12 @@ public class NfcMainActivity extends Activity implements CreateNdefMessageCallba
 	public NdefMessage createNdefMessage(NfcEvent event) {
 		String text = "Hello from Bratislava";
 
+		String nfcAar = getApplicationContext().getPackageName();;
+
 		NdefMessage nfcMsg = new NdefMessage(
 			new NdefRecord[] {
 				createMime(NFC_MIME_TYPE, text.getBytes()),
-//				NdefRecord.createApplicationRecord(NFC_AAR),
+				NdefRecord.createApplicationRecord(nfcAar),
 			}
 		);
 
