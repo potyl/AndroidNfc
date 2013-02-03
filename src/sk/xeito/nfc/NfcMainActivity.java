@@ -53,7 +53,7 @@ public class NfcMainActivity extends Activity implements CreateNdefMessageCallba
 		NdefMessage nfcMsg = new NdefMessage(
 			new NdefRecord[] {
 				createMime(NFC_MIME_TYPE, text.getBytes()),
-				NdefRecord.createApplicationRecord(nfcAar),
+				createApplicationRecord(nfcAar),
 			}
 		);
 
@@ -108,5 +108,14 @@ public class NfcMainActivity extends Activity implements CreateNdefMessageCallba
 		// MIME RFCs suggest ASCII encoding for content-type
 		byte [] typeBytes = mimeType.getBytes(US_ASCII);
 		return new NdefRecord(NdefRecord.TNF_MIME_MEDIA, typeBytes, null, mimeData);
+	}
+
+	private static final byte [] RTD_ANDROID_APP = "android.com:pkg".getBytes();
+	private static final Charset UTF_8 = Charset.forName("UTF-8");
+	private static NdefRecord createApplicationRecord(String packageName) {
+		if (packageName == null) throw new NullPointerException("packageName is null");
+		if (packageName.length() == 0) throw new IllegalArgumentException("packageName is empty");
+
+		return new NdefRecord(NdefRecord.TNF_EXTERNAL_TYPE, RTD_ANDROID_APP, null, packageName.getBytes(UTF_8));
 	}
 }
