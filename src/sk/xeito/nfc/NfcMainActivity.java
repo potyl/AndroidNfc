@@ -1,5 +1,7 @@
 package sk.xeito.nfc;
 
+import java.nio.charset.Charset;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.nfc.NdefMessage;
@@ -49,7 +51,7 @@ public class NfcMainActivity extends Activity implements CreateNdefMessageCallba
 
 		NdefMessage nfcMsg = new NdefMessage(
 			new NdefRecord[] {
-				NdefRecord.createMime(NFC_MIME_TYPE, text.getBytes()),
+				createMime(NFC_MIME_TYPE, text.getBytes()),
 //				NdefRecord.createApplicationRecord(NFC_AAR),
 			}
 		);
@@ -84,5 +86,26 @@ public class NfcMainActivity extends Activity implements CreateNdefMessageCallba
 		NdefMessage msg = (NdefMessage) rawMsgs[0];
 		// record 0 contains the MIME type, record 1 is the AAR, if present
 		label.setText(new String(msg.getRecords()[0].getPayload()));
+	}
+
+	private static final Charset US_ASCII = Charset.forName("US-ASCII");
+	private static NdefRecord createMime(String mimeType, byte [] mimeData) {
+		if (mimeType == null) throw new NullPointerException("mimeType is null");
+
+		// We only do basic MIME type validation: trying to follow the
+		// RFCs strictly only ends in tears, since there are lots of MIME
+		// types in common use that are not strictly valid as per RFC rules
+		mimeType = Intent.normalizeMimeType(mimeType);
+		if (mimeType.length() == 0) throw new IllegalArgumentException("mimeType is empty");
+		int slashIndex = mimeType.indexOf('/');
+		if (slashIndex == 0) throw new IllegalArgumentException("mimeType must have major type");
+		if (slashIndex == mimeType.length() - 1) {
+			throw new IllegalArgumentException("mimeType must have minor type");
+		}
+		// missing '/' is allowed
+
+		// MIME RFCs suggest ASCII encoding for content-type
+		byte [] typeBytes = mimeType.getBytes(US_ASCII);
+		return new NdefRecord(NdefRecord.TNF_MIME_MEDIA, typeBytes, null, mimeData);
 	}
 }
