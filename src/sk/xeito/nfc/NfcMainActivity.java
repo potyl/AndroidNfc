@@ -11,7 +11,6 @@ import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.view.Menu;
 import android.widget.TextView;
 
 public class NfcMainActivity extends Activity implements CreateNdefMessageCallback {
@@ -36,12 +35,6 @@ public class NfcMainActivity extends Activity implements CreateNdefMessageCallba
 			label.setText("NFC is supported");
 			nfcAdapter.setNdefPushMessageCallback(this, this);
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
 	}
 
 	@Override
