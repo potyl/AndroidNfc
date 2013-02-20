@@ -10,7 +10,6 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.TextView;
 
 public class NfcMainActivity extends Activity implements CreateNdefMessageCallback {
@@ -41,7 +40,7 @@ public class NfcMainActivity extends Activity implements CreateNdefMessageCallba
 	public NdefMessage createNdefMessage(NfcEvent event) {
 		String text = "Hello from Bratislava";
 
-		String nfcAar = getApplicationContext().getPackageName();;
+		String nfcAar = getApplicationContext().getPackageName();
 
 		NdefMessage nfcMsg = new NdefMessage(
 			new NdefRecord[] {
@@ -53,34 +52,6 @@ public class NfcMainActivity extends Activity implements CreateNdefMessageCallba
 		return nfcMsg;
 	}
 
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		Intent intent = getIntent();
-
-		// Check to see that the Activity started due to an Android Beam
-		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-			processIntent(intent);
-		}
-	}
-
-	@Override
-	public void onNewIntent(Intent intent) {
-		// onResume gets called after this to handle the intent
-		setIntent(intent);
-	}
-
-	/**
-	 * Parses the NDEF Message from the intent and prints to the TextView
-	 */
-	void processIntent(Intent intent) {
-		Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-		// only one message sent during the beam
-		NdefMessage msg = (NdefMessage) rawMsgs[0];
-		// record 0 contains the MIME type, record 1 is the AAR, if present
-		label.setText(new String(msg.getRecords()[0].getPayload()));
-	}
 
 	private static final Charset US_ASCII = Charset.forName("US-ASCII");
 	private static NdefRecord createMime(String mimeType, byte [] mimeData) {
